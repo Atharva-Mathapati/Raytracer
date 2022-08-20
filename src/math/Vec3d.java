@@ -56,6 +56,10 @@ public class Vec3d {
                 getX() * b.getY()  - getY() * b.getX());
     }
 
+    public Vec3d unitVector() {
+        return this.div(this.len());
+    }
+
     // Getters
 
     public double getX() {

@@ -19,7 +19,6 @@ public class Application extends JPanel {
 
 
     public Application(String title) {
-
         canvas = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
         JFrame frame = new JFrame(title);
@@ -49,7 +48,7 @@ public class Application extends JPanel {
                 double yCoordinate = (double) y / (HEIGHT-1);
                 Ray r = new Ray(new Point3d(0,0,0), lowerLeftCorner.add(horizontal.mul(xCoordinate)).add(vertical.mul(yCoordinate)).sub(new Vec3d(origin)));
                 // canvas.setRGB(x,y, determineColor(xCoordinate, yCoordinate));
-                canvas.setRGB(x,y, colorVecToInt(r.rayColor()));
+                canvas.setRGB(x, y, colorVecToInt(r.rayColor()));
             }
         }
     }

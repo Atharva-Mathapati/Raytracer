@@ -1,2 +1,2 @@
 # Raycaster
-A simple Raycaster built according to "Ray Tracing in One Weekend" by Peter Shirley to help understand basic concepts of Computer Graphics.
+A simple Raycaster built with the help of Peter Shirley's "Ray Tracing in One Weekend" to help understand basic concepts of Computer Graphics.

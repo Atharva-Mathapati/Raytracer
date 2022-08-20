@@ -20,20 +20,27 @@ public class Ray {
         return dir;
     }
 
+    // return Vector which represents a color with respective RGB values
     public Vec3d rayColor() {
-        if (hitSphere(new Point3d(0,0,-1), 0.5)) {
-            return new Vec3d(0,0,1);
+        double t = hitSphere(new Point3d(0,0,-1), 0.5);
+        if (t > 0) {
+            Vec3d n = new Vec3d(this.at(t).sub(new Point3d(0,0,-1)));
+            return new Vec3d(n.getX()+1, n.getY()+1, n.getZ()+1).mul(0.5);
         }
-        Vec3d unitDirection = getDir().div(getDir().len());
-        double t = 0.5 * (unitDirection.getY() + 1.0);
+        // multiply with -1 to flip colors horizontally to match implementation with the blog
+        Vec3d unitDirection = getDir().unitVector().mul(-1);
+        t = 0.5 * (unitDirection.getY() + 1.0);
         return new Vec3d(1,1,1).mul(1.0-t).add(new Vec3d(0.5, 0.7, 1.0).mul(t));
     }
-    public boolean hitSphere(Point3d center, double radius) {
+    public double hitSphere(Point3d center, double radius) {
         Vec3d oc = new Vec3d(getOrigin().sub(center));
         double a = getDir().dot(getDir());
         double b = 2.0 * oc.dot(getDir());
         double c = oc.dot(oc) - radius * radius;
         double discriminant = b*b - 4*a*c;
-        return discriminant > 0;
+        if (discriminant < 0)
+            return -1;
+        else
+            return (-b - Math.sqrt(discriminant)) / (2.0*a);
     }
 }
