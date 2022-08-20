@@ -49,18 +49,9 @@ public class Application extends JPanel {
                 double yCoordinate = (double) y / (HEIGHT-1);
                 Ray r = new Ray(new Point3d(0,0,0), lowerLeftCorner.add(horizontal.mul(xCoordinate)).add(vertical.mul(yCoordinate)).sub(new Vec3d(origin)));
                 // canvas.setRGB(x,y, determineColor(xCoordinate, yCoordinate));
-                canvas.setRGB(x,y, colorVecToInt(rayColor(r)));
+                canvas.setRGB(x,y, colorVecToInt(r.rayColor()));
             }
         }
-    }
-
-    private Vec3d rayColor(Ray r) {
-        if (hitSphere(new Point3d(0,0,-1), 0.5, r)) {
-            return new Vec3d(0,0,1);
-        }
-        Vec3d unitDirection = r.getDir().div(r.getDir().len());
-        double t = 0.5 * (unitDirection.getY() + 1.0);
-        return new Vec3d(1,1,1).mul(1.0-t).add(new Vec3d(0.5, 0.7, 1.0).mul(t));
     }
 
     private static int colorVecToInt(Vec3d b) {
@@ -76,15 +67,6 @@ public class Application extends JPanel {
 //        int g = (int) (y * 255);
 //        return 0xff000000 | (g & 0x000000FF) << 8 | (r & 0x000000FF);
 //    }
-
-    private boolean hitSphere(Point3d center, double radius, Ray r) {
-        Vec3d oc = new Vec3d(r.getOrigin().sub(center));
-        double a = r.getDir().dot(r.getDir());
-        double b = 2.0 * oc.dot(r.getDir());
-        double c = oc.dot(oc) - radius * radius;
-        double discriminant = b*b - 4*a*c;
-        return discriminant > 0;
-    }
 
     public static void main(String[] args) {
         new Application("Raytracer");
