@@ -9,13 +9,13 @@ import java.awt.image.BufferedImage;
 public class Application extends JPanel {
     public static final int WIDTH = 640;
     private static final int HEIGHT = WIDTH / 16 * 9;
-    private BufferedImage canvas;
-    private double focalLength = 1.0;
-    private Point3d origin = new Point3d(0,0,0);
-    private double aspectRatio = 16.0 / 9.0;
-    private Vec3d horizontal = new Vec3d(aspectRatio* 2.0, 0,0);
-    private Vec3d vertical = new Vec3d(0,2.0,0);
-    private Vec3d lowerLeftCorner = new Vec3d(origin).sub(horizontal.div(2)).sub(vertical.div(2)).sub(new Vec3d(0,0,focalLength));
+    private final BufferedImage canvas;
+    private final double focalLength = 1.0;
+    private final Point3d origin = new Point3d(0,0,0);
+    private final double aspectRatio = 16.0 / 9.0;
+    private final Vec3d horizontal = new Vec3d(aspectRatio* 2.0, 0,0);
+    private final Vec3d vertical = new Vec3d(0,2.0,0);
+    private final Vec3d lowerLeftCorner = new Vec3d(origin).sub(horizontal.div(2)).sub(vertical.div(2)).sub(new Vec3d(0,0,focalLength));
 
 
     public Application(String title) {

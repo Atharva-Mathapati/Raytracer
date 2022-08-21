@@ -1,7 +1,7 @@
 package math;
 
 public class Vec3d {
-    private double[] vec;
+    private final double[] vec;
 
     public Vec3d(double x, double y, double z) {
         this.vec = new double[] {x,y,z};

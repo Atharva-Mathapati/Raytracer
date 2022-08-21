@@ -1,8 +1,8 @@
 package math;
 
 public class Ray {
-    private Point3d origin;
-    private Vec3d dir;
+    private final Point3d origin;
+    private final Vec3d dir;
     public Ray(Point3d origin, Vec3d dir) {
         this.origin = origin;
         this.dir = dir;
@@ -20,14 +20,15 @@ public class Ray {
         return dir;
     }
 
-    // return Vector which represents a color with respective RGB values
+    // Return Vector which represents a color with respective RGB values
     public Vec3d rayColor() {
         double t = hitSphere(new Point3d(0,0,-1), 0.5);
         if (t > 0) {
-            Vec3d n = new Vec3d(this.at(t).sub(new Point3d(0,0,-1)));
+            // Multiply with Vec3d(1,-1,1) to flip colors horizontally
+            Vec3d n = new Vec3d(this.at(t).sub(new Vec3d(0,0,-1))).normalize().mul(new Vec3d(1,-1,1));
             return new Vec3d(n.getX()+1, n.getY()+1, n.getZ()+1).mul(0.5);
         }
-        // multiply with -1 to flip colors horizontally to match implementation with the blog
+        // Multiply with -1 to flip colors horizontally to match implementation of the blog
         Vec3d unitDirection = getDir().unitVector().mul(-1);
         t = 0.5 * (unitDirection.getY() + 1.0);
         return new Vec3d(1,1,1).mul(1.0-t).add(new Vec3d(0.5, 0.7, 1.0).mul(t));

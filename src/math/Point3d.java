@@ -16,4 +16,7 @@ public class Point3d {
     public Point3d sub(Point3d b) {
         return new Point3d(x - b.x , y - b.y,  z - b.z);
     }
+    public Point3d sub(Vec3d b) {
+        return new Point3d(x - b.getX() , y - b.getY(),  z - b.getZ());
+    }
 }
