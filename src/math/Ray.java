@@ -35,13 +35,14 @@ public class Ray {
     }
     public double hitSphere(Point3d center, double radius) {
         Vec3d oc = new Vec3d(getOrigin().sub(center));
-        double a = getDir().dot(getDir());
-        double b = 2.0 * oc.dot(getDir());
-        double c = oc.dot(oc) - radius * radius;
-        double discriminant = b*b - 4*a*c;
+        double a = getDir().lenSquared();
+        double halfB = oc.dot(getDir());
+        //double b = 2.0 * oc.dot(getDir());
+        double c = oc.lenSquared() - radius * radius;
+        double discriminant = halfB*halfB - a*c;
         if (discriminant < 0)
             return -1;
         else
-            return (-b - Math.sqrt(discriminant)) / (2.0*a);
+            return (-halfB - Math.sqrt(discriminant)) / (a);
     }
 }
