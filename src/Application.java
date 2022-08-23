@@ -45,7 +45,7 @@ public class Application extends JPanel {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                focalLength -= 0.1;
+                focalLength -= 0.05;
                 lowerLeftCorner = new Vec3d(origin).sub(horizontal.div(2)).sub(vertical.div(2)).sub(new Vec3d(0,0,focalLength));
                 repaint();
                 System.out.println("done");
