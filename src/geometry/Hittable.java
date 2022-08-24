@@ -1,3 +1,6 @@
+package geometry;
+
+import geometry.HitRecord;
 import math.Ray;
 
 public abstract class Hittable {

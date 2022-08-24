@@ -1,3 +1,7 @@
+package geometry;
+
+import geometry.HitRecord;
+import geometry.Hittable;
 import math.Point3d;
 import math.Ray;
 import math.Vec3d;
@@ -33,7 +37,8 @@ public class Sphere extends Hittable {
 
         rec.t = root;
         rec.p = r.at(rec.t);
-        rec.normal = new Vec3d(rec.p.sub(center).div(radius));
+        Vec3d outwardNormal = new Vec3d(rec.p.sub(center).div(radius));
+        rec.setFaceNormal(r, outwardNormal);
         return true;
     }
 }

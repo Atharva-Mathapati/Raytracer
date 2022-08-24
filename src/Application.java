@@ -1,3 +1,6 @@
+import geometry.Hittable;
+import geometry.HittableList;
+import geometry.Sphere;
 import math.Point3d;
 import math.Ray;
 import math.Vec3d;
@@ -7,25 +10,37 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class Application extends JPanel {
     public static final int WIDTH = 640;
     private static final int HEIGHT = WIDTH / 16 * 9;
-    private final BufferedImage canvas;
+    private final double aspectRatio = 16.0 / 9.0;
+
+    // Camera
+    double viewportHeight = 2.0;
+    double viewportWidth = aspectRatio * viewportHeight;
     private double focalLength = 1.0;
     private final Point3d origin = new Point3d(0,0,0);
-    private final double aspectRatio = 16.0 / 9.0;
-    private final Vec3d horizontal = new Vec3d(aspectRatio* 2.0, 0,0);
-    private final Vec3d vertical = new Vec3d(0,2.0,0);
+    private final Vec3d horizontal = new Vec3d(viewportWidth , 0,0);
+    private final Vec3d vertical = new Vec3d(0,viewportHeight,0);
     private Vec3d lowerLeftCorner = new Vec3d(origin).sub(horizontal.div(2)).sub(vertical.div(2)).sub(new Vec3d(0,0,focalLength));
 
-    private JFrame frame;
+    // World
+    private HittableList world = new HittableList();
+
+    // GUI
+    private final BufferedImage canvas;
+
 
     public Application(String title) {
         canvas = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
+        // add Spheres
+        world.add(new Sphere(new Point3d(0,-100.5,-1), 100));
+        world.add(new Sphere(new Point3d(0,0,-1), 0.5));
+
         JFrame frame = new JFrame(title);
-        this.frame = frame;
         frame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
         frame.setMaximumSize(new Dimension(WIDTH, HEIGHT));
         frame.setMinimumSize(new Dimension(WIDTH, HEIGHT));
@@ -37,7 +52,7 @@ public class Application extends JPanel {
         frame.setVisible(true);
 
         // Basic Movement for experimental purposes, move this elsewhere eventually
-        frame.addKeyListener(new KeyListener() {
+        /* frame.addKeyListener(new KeyListener() {
             @Override
             public void keyTyped(KeyEvent e) {
                return;
@@ -56,6 +71,7 @@ public class Application extends JPanel {
                 return;
             }
         });
+         */
     }
 
     @Override
@@ -72,9 +88,11 @@ public class Application extends JPanel {
                 // use coordinates to position ray accordingly
                 double xCoordinate = (double) x  / (WIDTH-1);
                 double yCoordinate = (double) y / (HEIGHT-1);
-                Ray r = new Ray(new Point3d(0,0,0), lowerLeftCorner.add(horizontal.mul(xCoordinate)).add(vertical.mul(yCoordinate)).sub(new Vec3d(origin)));
+
+                // Multiply with Vec3d(1,-1,1) to flip colors horizontally
+                Ray r = new Ray(new Point3d(0,0,0), lowerLeftCorner.add(horizontal.mul(xCoordinate)).add(vertical.mul(yCoordinate)).sub(new Vec3d(origin)).mul(new Vec3d(1,-1,1)));
                 // canvas.setRGB(x,y, determineColor(xCoordinate, yCoordinate));
-                canvas.setRGB(x, y, colorVecToInt(r.rayColor()));
+                canvas.setRGB(x, y, colorVecToInt(r.rayColor(world)));
             }
         }
     }
