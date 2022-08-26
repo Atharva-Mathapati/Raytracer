@@ -1,40 +1,29 @@
-import geometry.Hittable;
+import geometry.Camera;
 import geometry.HittableList;
 import geometry.Sphere;
 import math.Point3d;
 import math.Ray;
+import math.Util;
 import math.Vec3d;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 public class Application extends JPanel {
-    public static final int WIDTH = 640;
+    public static final int WIDTH = 800;
     private static final int HEIGHT = WIDTH / 16 * 9;
-    private final double aspectRatio = 16.0 / 9.0;
-
+    private static final int samplesPerPixel = 100;
     // Camera
-    double viewportHeight = 2.0;
-    double viewportWidth = aspectRatio * viewportHeight;
-    private double focalLength = 1.0;
-    private final Point3d origin = new Point3d(0,0,0);
-    private final Vec3d horizontal = new Vec3d(viewportWidth , 0,0);
-    private final Vec3d vertical = new Vec3d(0,viewportHeight,0);
-    private Vec3d lowerLeftCorner = new Vec3d(origin).sub(horizontal.div(2)).sub(vertical.div(2)).sub(new Vec3d(0,0,focalLength));
-
+    private final Camera camera= new Camera();
     // World
-    private HittableList world = new HittableList();
+    private final HittableList world = new HittableList();
 
     // GUI
-    private final BufferedImage canvas;
+    private final BufferedImage canvas = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
 
     public Application(String title) {
-        canvas = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
 
         // add Spheres
         world.add(new Sphere(new Point3d(0,-100.5,-1), 100));
@@ -83,24 +72,33 @@ public class Application extends JPanel {
     }
 
     private void drawPixels() {
-        for (int y = 0; y < HEIGHT; y++) {
-            for (int x = 0; x < WIDTH; x++) {
-                // use coordinates to position ray accordingly
-                double xCoordinate = (double) x  / (WIDTH-1);
-                double yCoordinate = (double) y / (HEIGHT-1);
-
-                // Multiply with Vec3d(1,-1,1) to flip colors horizontally
-                Ray r = new Ray(new Point3d(0,0,0), lowerLeftCorner.add(horizontal.mul(xCoordinate)).add(vertical.mul(yCoordinate)).sub(new Vec3d(origin)).mul(new Vec3d(1,-1,1)));
+        double u;
+        double v;
+        Vec3d color = new Vec3d(0,0,0);
+        for (int y = HEIGHT-1; y >= 0; --y) {
+            for (int x = 0; x < WIDTH; ++x) {
+                for (int i = 0; i < samplesPerPixel; i++) {
+                    u = (x + Util.rand()) / (WIDTH-1);
+                    v = (y  + Util.rand()) / (HEIGHT-1);
+                    Ray r = camera.getRay(u,v);
+                    color.setVec(color.add(r.rayColor(world)));
+                }
                 // canvas.setRGB(x,y, determineColor(xCoordinate, yCoordinate));
-                canvas.setRGB(x, y, colorVecToInt(r.rayColor(world)));
+                canvas.setRGB(x, y, colorVecToInt(color));
+                color.setVec(0,0,0);
             }
         }
     }
 
-    private static int colorVecToInt(Vec3d b) {
-        int rgb = (int) (b.getX() * 255) ; // r
-        rgb = (rgb << 8) + ((int) (b.getY() * 255));
-        rgb = (rgb << 8) + ((int) (b.getZ() * 255));
+    private static int colorVecToInt(Vec3d v) {
+
+        double scale = 1.0 / samplesPerPixel;
+        double r = v.getX() * scale;
+        double g = v.getY() * scale;
+        double b = v.getZ() * scale;
+        int rgb = (int) (Util.clamp(r, 0.0, 0.999) * 255) ; // r
+        rgb = (rgb << 8) + (int) (Util.clamp(g, 0.0, 0.999) * 255);
+        rgb = (rgb << 8) + (int) (Util.clamp(b, 0.0, 0.999)  * 255);
         return rgb;
     }
 
